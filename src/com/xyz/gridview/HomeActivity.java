@@ -244,28 +244,35 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 //            item.setChecked(mSelectMap.get(position) == null ? false
 //                    : mSelectMap.get(position));
 //            return item;
+			
+			
 			if (convertView == null) {
 				item =  new GridItem(mContext);
-			} 
-			
+			}  else {
+				item = (GridItem) convertView;
+			}
+			item.setTag(mUrlMap.get(position));
 			Drawable cacheImage = asyncImageLoader.loadDrawable(mUrlMap.get(position), new ImageCallback() {
 				
 				@Override
 				public void imageLoader(Drawable imageDrawable, String imageUrl) {
 					// TODO Auto-generated method stub
-					ImageView view = (ImageView) mGridView.findViewWithTag(imageUrl);
+					GridItem view = (GridItem) mGridView.findViewWithTag(imageUrl);
 					if (view != null) {
 						view.setImageDrawable(imageDrawable);
 					}
 				}
 			});
 				if (cacheImage == null) {
-					((ImageView) view).setImageResource(R.drawable.ic_launcher);
+					item.setImgResId(R.drawable.ic_launcher);
+					
 				} else {
-					((ImageView) view).setImageDrawable(cacheImage);
+					item.setImageDrawable(cacheImage);
 					
 //					((ImageView) view).setImageResource(R.drawable.ic_launcher);
 				}
+				
+				
 			
 			return item;
 		}
