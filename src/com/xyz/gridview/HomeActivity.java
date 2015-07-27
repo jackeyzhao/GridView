@@ -143,6 +143,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
         // TODO Auto-generated method stub
         mActionText.setText(formatString(mGridView.getCheckedItemCount()));
         mSelectMap.put(position, checked);
+        mGridView.findViewById(position);
         mode.invalidate();
     }
 
@@ -232,7 +233,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 		}
 //		@Override
 //		public View getView(int position, View convertView, ViewGroup parent) {
-//			// TODO Auto-generated method stub
+			// TODO Auto-generated method stub
 //			GridItem item;
 //            if (convertView == null) {
 //                item = new GridItem(mContext);
@@ -245,6 +246,11 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 //            item.setChecked(mSelectMap.get(position) == null ? false
 //                    : mSelectMap.get(position));
 //            return item;
+//			if (convertView == null) {
+//				return new GridView(mContext);
+//			} else {
+//				return convertView;
+//			}
 //		}
 		@Override
 		public ViewBinder getViewBinder() {
@@ -272,45 +278,19 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
     	public boolean setViewValue(View view, Cursor cursor, int arg2) {
     		// TODO Auto-generated method stub
     		
-//    			String zx = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-//    			Log.e("zx", zx);
     		if (arg2 == 0) {	
-    			Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon().
-  					  appendPath(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media._ID))).build();
-  			FileUtil file = new FileUtil();
-  			ContentResolver resolver = getContentResolver();
-  			// ��Uri�ж�ȡͼƬ��Դ
-//  			try {
-//  				byte [] mContent = null;
-//  				mContent = file.readInputStream(resolver.openInputStream(Uri.parse(uri.toString())));
-//  				Bitmap bitmap = null;
-//  				Options opt = new BitmapFactory.Options();
-//  				opt.inJustDecodeBounds = true;
-//  				BitmapFactory.decodeByteArray(mContent, 0, mContent.length, opt);
-//  				
-//  				opt.inSampleSize = computeInitialSampleSize(opt, -1, 128 * 128);
-//  				opt.inJustDecodeBounds = false;
-//  				bitmap = file.getBitmapFromBytes(mContent, opt );
-  				
-  				
-//  				((ImageView) view).setImageBitmap(bitmap);
-//  				((ImageView) view).setImageResource(R.drawable.ic_launcher);
-  				
-  				
-
-//  			 } catch (Exception e) {
-//  				// TODO: handle exception
-//  				e.printStackTrace();
-//  			}
-  			
-  			((ImageView) view).setTag(uri);
     			
-  				Drawable cacheImage = asyncImageLoader.loadDrawable(uri, new ImageCallback() {
+    			String url = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+    						
+  			
+  			((ImageView) view).setTag(url);
+    			
+  				Drawable cacheImage = asyncImageLoader.loadDrawable(url, new ImageCallback() {
 					
 					@Override
-					public void imageLoader(Drawable imageDrawable, Uri imageUri) {
+					public void imageLoader(Drawable imageDrawable, String imageUrl) {
 						// TODO Auto-generated method stub
-						ImageView view = (ImageView) mGridView.findViewWithTag(imageUri);
+						ImageView view = (ImageView) mGridView.findViewWithTag(imageUrl);
 						if (view != null) {
 							view.setImageDrawable(imageDrawable);
 						}
@@ -359,9 +339,9 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
     			this, 
     			MediaStore.Images.Media.EXTERNAL_CONTENT_URI, 
     			STORE_IMAGES, 
+    			null,
     			null, 
-    			null, 
-    			null);
+    			MediaStore.Images.ImageColumns.BUCKET_ID);
     	return cursorLoader;
 	}
 	
@@ -372,8 +352,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 		// TODO Auto-generated method stub
 		mGridCursorAdapter.swapCursor(cursor);
 		count = cursor.getCount();
-		
-		
+				
 	}
 
 	@Override

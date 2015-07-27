@@ -15,14 +15,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
 public class AsyncImageLoader {
-	private HashMap<Uri, SoftReference<Drawable>> imageCache;
+	private HashMap<String, SoftReference<Drawable>> imageCache;
 	private ContentResolver mResolver;
 	private ExecutorService executorService = Executors.newScheduledThreadPool(5);
 	 
@@ -35,13 +34,13 @@ public class AsyncImageLoader {
 	}
 
 	public AsyncImageLoader(ContentResolver resolver) {
-		imageCache = new HashMap<Uri, SoftReference<Drawable>>();
+		imageCache = new HashMap<String, SoftReference<Drawable>>();
 		mResolver = resolver;
 	}
 	
-	public Drawable loadDrawable(final Uri imageUri, final ImageCallback imageCallback) {
-		if (imageCache.containsKey(imageUri)) {
-			SoftReference<Drawable> softReference = imageCache.get(imageUri);
+	public Drawable loadDrawable(final String imageUrl, final ImageCallback imageCallback) {
+		if (imageCache.containsKey(imageUrl)) {
+			SoftReference<Drawable> softReference = imageCache.get(imageUrl);
 			Drawable drawable = softReference.get();
 			if(drawable != null) {
 				return drawable;
@@ -52,29 +51,20 @@ public class AsyncImageLoader {
 		
 		final Handler handle = new Handler() {
 			public void handleMessage(Message message) {
-				imageCallback.imageLoader((Drawable) message.obj, imageUri);
+				imageCallback.imageLoader((Drawable) message.obj, imageUrl);
 			}
 		};
 		
 		
 		
-//		new Thread() {
-//			public void run() {} {
-//				Drawable drawable = loadImageFromUrl(imageUri, mResolver);
-//				imageCache.put(imageUri, new SoftReference<Drawable>(drawable));
-//				Message message = handle.obtainMessage(0, drawable);
-//				handle.sendMessage(message);
-//			};
-//		}.run();
-//		
 		
 		Future<?> test = executorService.submit( new Runnable() {
 			
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				Drawable drawable = loadImageFromUrl(imageUri, mResolver);
-				imageCache.put(imageUri, new SoftReference<Drawable>(drawable));
+				Drawable drawable = loadImageFromUrl(imageUrl);
+				imageCache.put(imageUrl, new SoftReference<Drawable>(drawable));
 				Message message = handle.obtainMessage(0, drawable);
 				handle.sendMessage(message);
 			}
@@ -87,7 +77,7 @@ public class AsyncImageLoader {
 		return null;
 	}
 
-	public static Drawable loadImageFromUrl(Uri uri,ContentResolver resolver) {
+	public static Drawable loadImageFromUrl(String url) {
 		
 //		
 //		
@@ -104,26 +94,20 @@ public class AsyncImageLoader {
 		FileUtil file = new FileUtil();
 		Bitmap bitmap = null;
 		byte [] mContent = null;
-		try {
-			mContent = file.readInputStream(resolver.openInputStream(Uri.parse(uri.toString())));
-			opt.inJustDecodeBounds = true;
-			BitmapFactory.decodeByteArray(mContent, 0, mContent.length, opt);
-//			opt.outWidth = 200;
-//			opt.outHeight = 200;
-			opt.inSampleSize = computeInitialSampleSize(opt, -1, 230 * 230);
-			opt.inJustDecodeBounds = false;
-			
-			bitmap = file.getBitmapFromBytes(mContent, opt );
-			return new BitmapDrawable(null,bitmap);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
-		return null;
+			
+			opt.inJustDecodeBounds = true;
+			BitmapFactory.decodeFile(url, opt);
+//			opt.outWidth = 96;
+//			opt.outHeight = 96;
+			opt.inSampleSize = computeInitialSampleSize(opt, -1, 128 * 128);
+			opt.inJustDecodeBounds = false;
+
+			bitmap = BitmapFactory.decodeFile(url, opt);
+			return new BitmapDrawable(null,bitmap);
+		
+		
+		
 		
 	}
 	
@@ -150,7 +134,7 @@ public class AsyncImageLoader {
 		}
 	}
 	public interface ImageCallback {
-		public void imageLoader(Drawable imageDrawable, Uri imageUri);
+		public void imageLoader(Drawable imageDrawable, String url);
 	}
 	
 }
