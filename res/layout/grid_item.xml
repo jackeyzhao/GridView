@@ -5,9 +5,9 @@
 
     <ImageView
         android:id="@+id/img_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:scaleType="fitXY" />
+        android:scaleType="centerCrop"
+        android:layout_width="160dp"
+        android:layout_height="120dp"/>
 
     <ImageView
         android:id="@+id/select"

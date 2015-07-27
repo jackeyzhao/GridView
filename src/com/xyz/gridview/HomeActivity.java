@@ -55,8 +55,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 
     private static final String[] STORE_IMAGES = {
         MediaStore.Images.Media.DISPLAY_NAME,
-        MediaStore.Images.Media.LATITUDE,
-        MediaStore.Images.Media.LONGITUDE,
+        MediaStore.Images.Media.DATA,
         MediaStore.Images.Media._ID,
         
 	};
@@ -272,8 +271,9 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
     	@Override
     	public boolean setViewValue(View view, Cursor cursor, int arg2) {
     		// TODO Auto-generated method stub
-    			String zx = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME));
-    			Log.e("zx", zx);
+    		
+//    			String zx = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+//    			Log.e("zx", zx);
     		if (arg2 == 0) {	
     			Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon().
   					  appendPath(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media._ID))).build();
@@ -312,15 +312,16 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 						// TODO Auto-generated method stub
 						ImageView view = (ImageView) mGridView.findViewWithTag(imageUri);
 						if (view != null) {
-//							view.setImageDrawable(imageDrawable);
+							view.setImageDrawable(imageDrawable);
 						}
 					}
 				});
   				if (cacheImage == null) {
   					((ImageView) view).setImageResource(R.drawable.ic_launcher);
   				} else {
-//  					((ImageView) view).setImageDrawable(cacheImage);
-  					((ImageView) view).setImageResource(R.drawable.ic_launcher);
+  					((ImageView) view).setImageDrawable(cacheImage);
+  					
+//  					((ImageView) view).setImageResource(R.drawable.ic_launcher);
   				}
   				
     			
@@ -336,7 +337,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
     	double w = options.outWidth;
     	double h = options.outHeight;
     	int lowerBound = (maxNumOfPixex == -1) ? 1 : (int)Math.ceil(Math.sqrt(w*h/maxNumOfPixex));
-    	int uperBound = (minSideLength == -1) ? 128 : (int) Math.min(Math.floor(w/minSideLength), Math.floor(h/minSideLength));
+    	int uperBound = (minSideLength == -1) ? 230 : (int) Math.min(Math.floor(w/minSideLength), Math.floor(h/minSideLength));
     	
     	if (uperBound < lowerBound) {
     		return lowerBound;
