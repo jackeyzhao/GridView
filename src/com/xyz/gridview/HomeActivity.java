@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.xyz.gridview.AsyncImageLoader.ImageCallback;
+
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -11,6 +13,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -196,10 +199,12 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 
     private class GridViewCursorAdapter extends SimpleCursorAdapter {
 
+    	private AsyncImageLoader asyncImageLoader;
 		public GridViewCursorAdapter(Context context, int layout, Cursor c,
 				String[] from, int[] to, int flags) {
 			super(context, layout, c, from, to, flags);
 			// TODO Auto-generated constructor stub
+			asyncImageLoader = new AsyncImageLoader(getContentResolver());
 		}
     	
 		@Override
@@ -207,6 +212,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 			// TODO Auto-generated method stub
 //			return mImgIds.length;
 			return count;
+//			return 10;
 		}
 		
 		@Override
@@ -256,37 +262,67 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
     
     
 	
-	 // ½«Í¼Æ¬µÄÎ»ÖÃ°ó¶¨µ½ÊÓÍ¼
+	 // ï¿½ï¿½Í¼Æ¬ï¿½ï¿½Î»ï¿½Ã°ó¶¨µï¿½ï¿½ï¿½Í¼
     private class ImageLocationBinder implements ViewBinder{ 
+    	private AsyncImageLoader asyncImageLoader;
+    	
+    	public ImageLocationBinder() {
+    		asyncImageLoader = new AsyncImageLoader(getContentResolver());
+    	}
     	@Override
     	public boolean setViewValue(View view, Cursor cursor, int arg2) {
     		// TODO Auto-generated method stub
     			String zx = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME));
-    			Log.d("zx", zx);
+    			Log.e("zx", zx);
     		if (arg2 == 0) {	
     			Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon().
   					  appendPath(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media._ID))).build();
   			FileUtil file = new FileUtil();
   			ContentResolver resolver = getContentResolver();
-  			// ´ÓUriÖÐ¶ÁÈ¡Í¼Æ¬×ÊÔ´
-  			try {
-  				byte [] mContent = null;
-  				mContent = file.readInputStream(resolver.openInputStream(Uri.parse(uri.toString())));
-  				Bitmap bitmap = null;
-  				Options opt = new BitmapFactory.Options();
-  				opt.inJustDecodeBounds = true;
-  				BitmapFactory.decodeByteArray(mContent, 0, mContent.length, opt);
+  			// ï¿½ï¿½Uriï¿½Ð¶ï¿½È¡Í¼Æ¬ï¿½ï¿½Ô´
+//  			try {
+//  				byte [] mContent = null;
+//  				mContent = file.readInputStream(resolver.openInputStream(Uri.parse(uri.toString())));
+//  				Bitmap bitmap = null;
+//  				Options opt = new BitmapFactory.Options();
+//  				opt.inJustDecodeBounds = true;
+//  				BitmapFactory.decodeByteArray(mContent, 0, mContent.length, opt);
+//  				
+//  				opt.inSampleSize = computeInitialSampleSize(opt, -1, 128 * 128);
+//  				opt.inJustDecodeBounds = false;
+//  				bitmap = file.getBitmapFromBytes(mContent, opt );
   				
-  				opt.inSampleSize = computeInitialSampleSize(opt, -1, 128 * 128);
-  				opt.inJustDecodeBounds = false;
-  				bitmap = file.getBitmapFromBytes(mContent, opt );
-  				((ImageView) view).setImageBitmap(bitmap);
-  			} catch (Exception e) {
-  				// TODO: handle exception
-  				e.printStackTrace();
-  			}
+  				
+//  				((ImageView) view).setImageBitmap(bitmap);
+//  				((ImageView) view).setImageResource(R.drawable.ic_launcher);
+  				
+  				
+
+//  			 } catch (Exception e) {
+//  				// TODO: handle exception
+//  				e.printStackTrace();
+//  			}
+  			
+  			((ImageView) view).setTag(uri);
     			
-    			
+  				Drawable cacheImage = asyncImageLoader.loadDrawable(uri, new ImageCallback() {
+					
+					@Override
+					public void imageLoader(Drawable imageDrawable, Uri imageUri) {
+						// TODO Auto-generated method stub
+						ImageView view = (ImageView) mGridView.findViewWithTag(imageUri);
+						if (view != null) {
+//							view.setImageDrawable(imageDrawable);
+						}
+					}
+				});
+  				if (cacheImage == null) {
+  					((ImageView) view).setImageResource(R.drawable.ic_launcher);
+  				} else {
+//  					((ImageView) view).setImageDrawable(cacheImage);
+  					((ImageView) view).setImageResource(R.drawable.ic_launcher);
+  				}
+  				
     			
     			
                 return true;
