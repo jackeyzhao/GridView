@@ -226,6 +226,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 		@Override
 		public long getItemId(int position) {
 			// TODO Auto-generated method stub
+			Log.e("getItemId", "positon:"+ position);
 			return position;
 		}
 	
@@ -245,14 +246,19 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 //                    : mSelectMap.get(position));
 //            return item;
 			
-			
+			String tag = mUrlMap.get(position);
 			if (convertView == null) {
 				item =  new GridItem(mContext);
+				
 			}  else {
 				item = (GridItem) convertView;
 			}
-			item.setTag(mUrlMap.get(position));
-			Drawable cacheImage = asyncImageLoader.loadDrawable(mUrlMap.get(position), new ImageCallback() {
+			
+			item.setTag(tag);
+			
+			Drawable cacheImage = asyncImageLoader.loadDrawable(tag);
+			if (cacheImage == null) {
+				cacheImage =	asyncImageLoader.loadDrawable(tag, new ImageCallback() {
 				
 				@Override
 				public void imageLoader(Drawable imageDrawable, String imageUrl) {
@@ -263,6 +269,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 					}
 				}
 			});
+			}
 				if (cacheImage == null) {
 					item.setImgResId(R.drawable.ic_launcher);
 					

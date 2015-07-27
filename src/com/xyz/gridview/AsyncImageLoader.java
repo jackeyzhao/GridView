@@ -37,8 +37,7 @@ public class AsyncImageLoader {
 		imageCache = new HashMap<String, SoftReference<Drawable>>();
 		mResolver = resolver;
 	}
-	
-	public Drawable loadDrawable(final String imageUrl, final ImageCallback imageCallback) {
+	public Drawable loadDrawable(String imageUrl) {
 		if (imageCache.containsKey(imageUrl)) {
 			SoftReference<Drawable> softReference = imageCache.get(imageUrl);
 			Drawable drawable = softReference.get();
@@ -47,7 +46,20 @@ public class AsyncImageLoader {
 			}
 			
 			
-		}
+		} 
+		return null;
+	}
+	
+	public Drawable loadDrawable(final String imageUrl, final ImageCallback imageCallback) {
+//		if (imageCache.containsKey(imageUrl)) {
+//			SoftReference<Drawable> softReference = imageCache.get(imageUrl);
+//			Drawable drawable = softReference.get();
+//			if(drawable != null) {
+//				return drawable;
+//			}
+//			
+//			
+//		}
 		
 		final Handler handle = new Handler() {
 			public void handleMessage(Message message) {
