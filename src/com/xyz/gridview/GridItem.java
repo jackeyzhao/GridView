@@ -1,6 +1,7 @@
 package com.xyz.gridview;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,6 +59,12 @@ public class GridItem extends RelativeLayout implements Checkable {
         if (mImgView != null) {
             mImgView.setBackgroundResource(resId);
         }
+    }
+    
+    public void setImageDrawable(Drawable drawable) {
+    	if (mImgView != null) {
+    		mImgView.setBackground(drawable);
+    	}
     }
 
 }

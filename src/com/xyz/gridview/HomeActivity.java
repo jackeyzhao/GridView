@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient.CustomViewCallback;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.BaseAdapter;
@@ -50,7 +51,8 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
     private TextView mActionText;
     private static final int MENU_SELECT_ALL = 0;
     private static final int MENU_UNSELECT_ALL = MENU_SELECT_ALL + 1;
-    private Map<Integer, Boolean> mSelectMap = new HashMap<Integer, Boolean>();
+    private Map<Integer, Boolean > mSelectMap = new HashMap<Integer, Boolean>();
+    private Map<Integer, String> mUrlMap = new HashMap<Integer, String>();
     private int count = 0;
 
     private static final String[] STORE_IMAGES = {
@@ -226,15 +228,11 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 			// TODO Auto-generated method stub
 			return position;
 		}
+	
 		@Override
-		public Cursor getCursor() {
+		public View getView(int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
-			return super.getCursor();
-		}
-//		@Override
-//		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-//			GridItem item;
+			GridItem item;
 //            if (convertView == null) {
 //                item = new GridItem(mContext);
 //                item.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
@@ -246,12 +244,31 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 //            item.setChecked(mSelectMap.get(position) == null ? false
 //                    : mSelectMap.get(position));
 //            return item;
-//			if (convertView == null) {
-//				return new GridView(mContext);
-//			} else {
-//				return convertView;
-//			}
-//		}
+			if (convertView == null) {
+				item =  new GridItem(mContext);
+			} 
+			
+			Drawable cacheImage = asyncImageLoader.loadDrawable(mUrlMap.get(position), new ImageCallback() {
+				
+				@Override
+				public void imageLoader(Drawable imageDrawable, String imageUrl) {
+					// TODO Auto-generated method stub
+					ImageView view = (ImageView) mGridView.findViewWithTag(imageUrl);
+					if (view != null) {
+						view.setImageDrawable(imageDrawable);
+					}
+				}
+			});
+				if (cacheImage == null) {
+					((ImageView) view).setImageResource(R.drawable.ic_launcher);
+				} else {
+					((ImageView) view).setImageDrawable(cacheImage);
+					
+//					((ImageView) view).setImageResource(R.drawable.ic_launcher);
+				}
+			
+			return item;
+		}
 		@Override
 		public ViewBinder getViewBinder() {
 			// TODO Auto-generated method stub
@@ -352,7 +369,18 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 		// TODO Auto-generated method stub
 		mGridCursorAdapter.swapCursor(cursor);
 		count = cursor.getCount();
-				
+		int position = cursor.getPosition();
+		cursor.moveToFirst();
+		int i = 0;
+		while(!cursor.isLast()) {
+			mUrlMap.put(i, cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA)));
+			cursor.moveToNext();
+			i ++;
+		} 
+		mUrlMap.put(i, cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA)));
+			
+		Log.e("zx", "positon:"+ position + "=i="+i);
+		cursor.moveToPosition(position);
 	}
 
 	@Override
