@@ -1,13 +1,10 @@
 package com.xyz.gridview;
 
-import java.io.FileNotFoundException;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import com.xyz.gridview.R.drawable;
 
 import android.content.ContentResolver;
 import android.graphics.Bitmap;
@@ -15,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -91,19 +87,10 @@ public class AsyncImageLoader {
 
 	public static Drawable loadImageFromUrl(String url) {
 		
-//		
-//		
-//		
-//		Options opt = new BitmapFactory.Options();
-//		opt.inJustDecodeBounds = true;
-//		
-//		
-//		
-//		
-//		
+
 		
 		Options opt = new Options();
-		FileUtil file = new FileUtil();
+
 		Bitmap bitmap = null;
 		byte [] mContent = null;
 		
