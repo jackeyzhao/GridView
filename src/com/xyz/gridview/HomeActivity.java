@@ -1,6 +1,7 @@
 package com.xyz.gridview;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import com.xyz.gridview.AsyncImageLoader.ImageCallback;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,7 +26,10 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.Loader.OnLoadCompleteListener;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
+import android.text.SpannableString;
 import android.util.Log;
+import android.util.SparseArray;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -51,8 +56,8 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
     private TextView mActionText;
     private static final int MENU_SELECT_ALL = 0;
     private static final int MENU_UNSELECT_ALL = MENU_SELECT_ALL + 1;
-    private Map<Integer, Boolean > mSelectMap = new HashMap<Integer, Boolean>();
-    private Map<Integer, String> mUrlMap = new HashMap<Integer, String>();
+    private Map<Integer, Boolean> mSelectMap = new HashMap<Integer, Boolean>();
+    private Map<Integer, String >mUrlMap = new HashMap<Integer, String>(); 
     private int count = 0;
 
     private static final String[] STORE_IMAGES = {
@@ -123,6 +128,28 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
                 mSelectMap.clear();
             }
             break;
+        case R.id.menu_confirm:
+        	
+        	Intent data = new Intent();
+        	Bundle bundle = new Bundle();
+        	
+        	String[] array = new String[mSelectMap.size()];
+        	
+        	Iterator iter = mSelectMap.entrySet().iterator();
+        	int i = 0;
+        	while ( iter.hasNext()) {
+        		Map.Entry entry = (Map.Entry) iter.next();
+        		int key = (Integer) entry.getKey();
+        		array[i] = mUrlMap.get(key);
+        		i++;
+        	}
+        	
+        	
+        	bundle.putStringArray("need_upload", array);
+        	data.putExtra("needUpload", bundle);
+//        	bundle.put
+        	setResult(1002, data);
+        	finish();
         }
         return true;
     }
@@ -138,8 +165,12 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
             long id, boolean checked) {
         // TODO Auto-generated method stub
         mActionText.setText(formatString(mGridView.getCheckedItemCount()));
-        mSelectMap.put(position, checked);
-        mGridView.findViewById(position);
+        if (checked) {
+        	mSelectMap.put(position, checked);
+        } else {
+        	mSelectMap.remove(position);
+        }
+//        mGridView.findViewById(position);
         mode.invalidate();
     }
 
@@ -173,7 +204,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 		@Override
 		public long getItemId(int position) {
 			// TODO Auto-generated method stub
-			Log.e("getItemId", "positon:"+ position);
+//			Log.e("getItemId", "positon:"+ position);
 			return position;
 		}
 	
@@ -181,17 +212,6 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			GridItem item;
-//            if (convertView == null) {
-//                item = new GridItem(mContext);
-//                item.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-//                        LayoutParams.FILL_PARENT));
-//            } else {
-//                item = (GridItem) convertView;
-//            }
-//            item.setImgResId(getItem(position));
-//            item.setChecked(mSelectMap.get(position) == null ? false
-//                    : mSelectMap.get(position));
-//            return item;
 			
 			String tag = mUrlMap.get(position);
 			if (convertView == null) {
@@ -268,7 +288,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
 		} 
 		mUrlMap.put(i, cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA)));
 			
-		Log.e("zx", "positon:"+ position + "=i="+i);
+//		Log.e("zx", "positon:"+ position + "=i="+i);
 		cursor.moveToPosition(position);
 	}
 

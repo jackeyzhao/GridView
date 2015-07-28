@@ -2,10 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/menu_confirm"
+        android:title="@string/confirm"/>
+    
+    <item
         android:id="@+id/menu_select"
         android:title="@string/select_all"/>
     <item
         android:id="@+id/menu_unselect"
         android:title="@string/unselect_all"/>
+    
+    
 
 </menu>

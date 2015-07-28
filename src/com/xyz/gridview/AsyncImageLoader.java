@@ -66,7 +66,7 @@ public class AsyncImageLoader {
 		
 		
 		
-		Future<?> test = executorService.submit( new Runnable() {
+		executorService.submit( new Runnable() {
 			
 			@Override
 			public void run() {
@@ -78,9 +78,6 @@ public class AsyncImageLoader {
 			}
 		});
 		
-		if (!test.isDone()) {
-			Log.d("zx", "error");
-		}
 		
 		return null;
 	}

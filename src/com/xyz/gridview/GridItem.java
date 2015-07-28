@@ -38,11 +38,15 @@ public class GridItem extends RelativeLayout implements Checkable {
     public void setChecked(boolean checked) {
         // TODO Auto-generated method stub
         mChecked = checked;
+//        setBackground(checked ? getResources().getDrawable(
+//                R.drawable.background) : null);
+//        mSecletView.setVisibility(checked ? View.VISIBLE : View.GONE);
         setBackgroundDrawable(checked ? getResources().getDrawable(
                 R.drawable.background) : null);
         mSecletView.setVisibility(checked ? View.VISIBLE : View.GONE);
     }
 
+    
     @Override
     public boolean isChecked() {
         // TODO Auto-generated method stub
@@ -63,7 +67,8 @@ public class GridItem extends RelativeLayout implements Checkable {
     
     public void setImageDrawable(Drawable drawable) {
     	if (mImgView != null) {
-    		mImgView.setBackground(drawable);
+//    		mImgView.setBackground(drawable);
+    		mImgView.setBackgroundDrawable(drawable);
     	}
     }
 
