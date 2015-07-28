@@ -54,6 +54,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
     private GridView mGridView;
 
     private TextView mActionText;
+    private TextView mActionConfirm;
     private static final int MENU_SELECT_ALL = 0;
     private static final int MENU_UNSELECT_ALL = MENU_SELECT_ALL + 1;
     private Map<Integer, Boolean> mSelectMap = new HashMap<Integer, Boolean>();
@@ -99,8 +100,38 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
                 null);
         mActionText = (TextView) v.findViewById(R.id.action_text);
         mActionText.setText(formatString(mGridView.getCheckedItemCount()));
+        mActionConfirm = (TextView) v.findViewById(R.id.action_confirm);
+        mActionConfirm.setText("确认");
+        mActionConfirm.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent data = new Intent();
+	        	Bundle bundle = new Bundle();
+	        	
+	        	String[] array = new String[mSelectMap.size()];
+	        	
+	        	Iterator iter = mSelectMap.entrySet().iterator();
+	        	int i = 0;
+	        	while ( iter.hasNext()) {
+	        		Map.Entry entry = (Map.Entry) iter.next();
+	        		int key = (Integer) entry.getKey();
+	        		array[i] = mUrlMap.get(key);
+	        		i++;
+	        	}
+	        	
+	        	
+	        	bundle.putStringArray("need_upload", array);
+	        	data.putExtra("needUpload", bundle);
+//	        	bundle.put
+	        	setResult(1002, data);
+	        	finish();
+			}
+		});
         mode.setCustomView(v);
         getMenuInflater().inflate(R.menu.action_menu, menu);
+        
         return true;
     }
 
@@ -116,18 +147,7 @@ public class HomeActivity extends FragmentActivity implements MultiChoiceModeLis
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         // TODO Auto-generated method stub
         switch (item.getItemId()) {
-        case R.id.menu_select:
-            for (int i = 0; i < mGridView.getCount(); i++) {
-                mGridView.setItemChecked(i, true);
-                mSelectMap.put(i, true);
-            }
-            break;
-        case R.id.menu_unselect:
-            for (int i = 0; i < mGridView.getCount(); i++) {
-                mGridView.setItemChecked(i, false);
-                mSelectMap.clear();
-            }
-            break;
+        
         case R.id.menu_confirm:
         	
         	Intent data = new Intent();
